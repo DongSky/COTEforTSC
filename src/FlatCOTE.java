@@ -15,7 +15,7 @@ import weka.core.Instances;
 import weka.core.SystemInfo;
 
 public class FlatCOTE{
-    public static String cvDir="Result/cvAccs";
+    public static String cvDir="Results/cvAccs";
     public static String trainTestDir="Results/unifiedTrainTest";
     public static String instancesLoc="TSC Problems";
     public enum EnsembleType{
@@ -104,13 +104,13 @@ public class FlatCOTE{
         return data;
     }
     //function to get cvAccuracy data
-    public static double getCvAcc(ClassifierType classifierType,String dataSetName) throws FileNotFoundException{
-        File CvFile=new File(cvDir+"/"+classifierType+"/cvAcc_"+classifierType+"_"+dataSetName+".txt");
-        if(!CvFile.exists()){
-            throw new FileNotFoundException("could not locale the cv file of "+classifierType+" and "+dataSetName);
+    public static double getCvAcc(ClassifierType classifierType, String datasetName) throws Exception{
+        File cvFile = new File(cvDir+"/"+classifierType+"/cvAcc_"+classifierType+"_"+datasetName+".txt");
+        if(!cvFile.exists()){
+            throw new FileNotFoundException("Could not locate the cv file for "+classifierType+" and "+datasetName+".");
         }
-        Scanner s=new Scanner(CvFile);
-        return Double.parseDouble(s.next().trim());
+        Scanner scan = new Scanner(cvFile);
+        return Double.parseDouble(scan.next().trim());
     }
     //function to get Train or Test Accuracy data
     public static double getTrainTestAcc(ClassifierType classifierType,String dataSetName) throws FileNotFoundException{
@@ -133,22 +133,29 @@ public class FlatCOTE{
     }
     //some functions used to get Predictions
     //function to get test predictions
-    public static double[] getTestPredictions(ClassifierType classifierType,String dataSetName) throws Exception{
-        File trainTestResults=new File(trainTestDir+"/"+classifierType+"/trainTest_"+classifierType+"_"+dataSetName+".txt");
+    public static double[] getTestPredictions(String datasetName, ClassifierType classifier) throws Exception{
+    
+        // load in the file, and then put predictions into a double[] and return (also check accuracy against the arff to make sure the data is correct)
+    
+        File trainTestResults = new File(trainTestDir+"/"+classifier+"/trainTest_"+classifier+"_"+datasetName+".txt");
         if(!trainTestResults.exists()){
-            throw new FileNotFoundException("TrainTest file not found: " + dataSetName + ", " + classifierType);
+            throw new FileNotFoundException("TrainTest file not found!: "+ datasetName+", "+classifier);
         }
-        Scanner s=new Scanner(trainTestResults);
-        s.useDelimiter("\n");
-        String[] results=s.next().split("/");
-        double[] predictions=new double[Integer.parseInt(results[1].trim())];
-        int i=0;
-        while(s.hasNext()){
-            predictions[i++]=Double.parseDouble(s.next().split(",")[0].trim());
-            if(i!=predictions.length){
-                throw new Exception("Problem with the data: read in "+i+" instances, expected "+predictions.length);
-            }
+    
+        Scanner scan = new Scanner(trainTestResults);
+        scan.useDelimiter("\n");
+        String[] results = scan.next().split("/");
+        double[] predictions = new double[Integer.parseInt(results[1].trim())];
+    
+    
+        int i = 0;
+        while(scan.hasNext()){
+            predictions[i++] = Double.parseDouble(scan.next().split(",")[0].trim());
         }
+        if(i!=predictions.length){
+            throw new Exception("Problem with the data: read in "+i+" instances, expected "+predictions.length);
+        }
+    
         return predictions;
     }
     /*
@@ -216,7 +223,7 @@ public class FlatCOTE{
             if(this.ensembleType!=EnsembleType.Equal){
                 cvAccuracy[i]=getCvAcc(classifiers[i],dataSetName);
             }
-            predictions[i]=getTestPredictions(classifiers[i],dataSetName);
+            predictions[i]=getTestPredictions(dataSetName,classifiers[i]);
             if(predictions[i].length!=actualClassValues.length){
                 throw new Exception("Instance num mismatch between raw data and predictions for "+classifiers[i]+" on "+dataSetName);
             }

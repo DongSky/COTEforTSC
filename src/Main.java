@@ -1,5 +1,6 @@
 public class Main {
     public static String[] DATASET_LIST_SDM = {
+            // <editor-fold defaultstate="collapsed" desc="Sorted approximately in ascending order of run-time when generating original results">
             "ItalyPowerDemand",
             "SonyAIBORobotSurface",
             "TwoLeadECG",
@@ -72,7 +73,8 @@ public class Main {
             "FordB",
             "normalisedWorms",              // new datasets were normalised too
             "normalisedWormsTwoClass",      // normalised, as discussed
-
+            
+            // </editor-fold>
     };
     
     public static void main(String[] args) {
@@ -88,24 +90,27 @@ public class Main {
         ps.choosePS();
         FlatCOTE acf=new FlatCOTE();
         acf.chooseACF();
-        String[] datasets= {"normalisedWorms","normalisedWormsTwoClass"};
+        String[] datasets = {"normalisedWorms","normalisedWormsTwoClass"};
         System.out.println("Datasets,Flat-COTE,Elastic,Shapelet,PS,ACF");
         for(int d=0;d<datasets.length;d++){
             String dataset=datasets[d];
+            System.out.println(dataset);
             try{
+                //System.out.println(1);
                 double acc_flat=flat.classify(dataset,false,null);
+                //System.out.println(2);
                 double acc_ee=ee.classify(dataset,false,null);
+                //System.out.println(3);
                 double acc_shapelet=shapelet.classify(dataset,false,null);
+                //System.out.println(4);
                 double acc_ps=ps.classify(dataset,false,null);
+                //System.out.println(5);
                 double acc_acf=acf.classify(dataset,false,null);
-                String output=dataset.replaceAll("noarmalised","")+":\n"+"Flat:"+acc_flat+"\nEE:"+acc_ee+"\nShapelet:"+acc_shapelet+"\nPS:"+acc_ps+"\nACF:"+acc_acf+"\n";
+                String output=dataset.replaceAll("normalised","")+":\n"+"Flat:"+acc_flat+"\nEE:"+acc_ee+"\nShapelet:"+acc_shapelet+"\nPS:"+acc_ps+"\nACF:"+acc_acf+"\n";
                 System.out.println(output);
-            } catch (Exception e) {
+            }catch (Exception e) {
                 System.out.println(dataset+" missing");
             }
         }
-    
-    
-    
     }
 }
