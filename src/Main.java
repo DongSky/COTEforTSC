@@ -90,11 +90,11 @@ public class Main {
         ps.choosePS();
         FlatCOTE acf=new FlatCOTE();
         acf.chooseACF();
-        String[] datasets = {"normalisedWorms","normalisedWormsTwoClass"};
+        String[] datasets = {"Adiac","Beef","Car","CBF","ChlorineConcentration","normalisedWorms","normalisedWormsTwoClass","Herring","BeetleFly","BirdChicken","FaceAll","FordA","InlineSkate","Lightning2","MoteStrain","OSULeaf","OliveOil","Plane","ProximalPhalanxTW","Symbols"};
         System.out.println("Datasets,Flat-COTE,Elastic,Shapelet,PS,ACF");
         for(int d=0;d<datasets.length;d++){
             String dataset=datasets[d];
-            System.out.println(dataset);
+            //System.out.println(dataset);
             try{
                 //System.out.println(1);
                 double acc_flat=flat.classify(dataset,false,null);
